@@ -1,4 +1,8 @@
 # Snake Environment
+## How to run?
+
+
+
 ## Enums:
 ### Action
 * `LEFT (-1)`
