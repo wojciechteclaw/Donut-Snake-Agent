@@ -109,13 +109,13 @@ Return board with snake body and head as np.array
 Provides vision inside environment. It's based on raycasting depending upon a snake direction.
 The raycasting is always in the reference to the snake direction As shown below:
 ### UP
-![UP](/docs/up_direction.png)
+![UP](docs/up_direction.png)
 ### RIGHT
-![RIGHT](/docs/right_direction.png)
+![RIGHT](docs/right_direction.png)
 ### DOWN
-![DOWN](/docs/down_direction.png)
+![DOWN](docs/down_direction.png)
 ### LEFT
-![LEFT](/docs/left_direction.png)
+![LEFT](docs/left_direction.png)
 
 ### _rotate_from_direction
 #### Global coordinate system
