@@ -33,6 +33,13 @@ It uses following json properties:
 * `number_of_steps_without_food (int)` - number of steps since the last chunk of food was found
 * `number_of_games (int)` - total number of games
 
+## Run SNAKE-VISUALIZER + TRANSMITER
+
+`docker-compose up`
+
+
 ## SNAKE-RL 
-Read the docs
+Please read detailed description of the snake concept in designated folder:
+
+[Snake agent docs](./snake-rl/README.md)
 
