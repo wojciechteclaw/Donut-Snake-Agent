@@ -14,7 +14,7 @@ export const ModelViewer = () => {
     const [environemnt, setEnvironment] = useState<Array<Array<number>>>([]);
     const [xrows, setXRows] = useState<number>(0);
     const [yrows, setYRows] = useState<number>(0);
-    const [isDoughnut, setIsDoughnut] = useState<boolean>(false);
+    const [isDonut, setIsDonut] = useState<boolean>(false);
     const [currentReward, setCurrentReward] = useState<number>(0);
     const [currentScore, setCurrentScore] = useState<number>(0);
     const [currentStatus, setCurrentStatus] = useState<number>(0);
@@ -38,7 +38,7 @@ export const ModelViewer = () => {
             const { environment_object,
                     x_rows, 
                     y_rows,
-                    is_doughnut,
+                    is_donut,
                     is_alive,
                     reward,
                     score,
@@ -48,7 +48,7 @@ export const ModelViewer = () => {
             setEnvironment(environment_object);
             setXRows(x_rows);
             setYRows(y_rows);
-            setIsDoughnut(is_doughnut);
+            setIsDonut(is_donut);
             setCurrentStatus(is_alive ? 1 : 0);
             setCurrentReward(reward);
             setCurrentScore(score);
@@ -67,12 +67,12 @@ export const ModelViewer = () => {
         for (let i = 0; i < yrows; i++){
             for (let j = 0; j < xrows; j++){
                 boxesEnv[`${i}-${j}`] = <CustomBox key={`${i}-${j}`}
-                                                   x_index={i}
-                                                   y_index={j}
+                                                   x_index={j}
+                                                   y_index={i}
                                                    max_x={xrows}
                                                    max_y={yrows}
                                                    mode={environemnt[i][j]}
-                                                   isDoughnut={isDoughnut}
+                                                   isDonut={isDonut}
                                                    />
             }
         }
