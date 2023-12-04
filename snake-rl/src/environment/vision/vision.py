@@ -9,8 +9,12 @@ class Vision:
 
     def __init__(self, snake: Snake, board: np.ndarray):
         self.snake = snake
+        self.is_penetration_active = snake.is_penetration_active
         self.board = board
         self._max_distance = max(self.snake.size_x, self.snake.size_y)
+        self._x_max_distance = self.snake.size_x
+        self._y_max_distance = self.snake.size_y
+        self._diag_max_distance = min(np.sqrt(self._x_max_distance ** 2 * 2), np.sqrt(self._y_max_distance ** 2 * 2))
 
     def _rotate_from_direction(self):
         direction_value = self.snake.direction.value
@@ -25,18 +29,15 @@ class Vision:
         start = self.snake.head
         (x_step, y_step) = direction.value
         x, y = start.x, start.y
-        first_shot = True
         number_of_steps_in_direction = 0
-        intersecting_categories = [Field.APPLE.value, Field.SNAKE_BODY.value, Field.WALL.value, Field.SNAKE_HEAD.value]
+        intersecting_categories = [Field.APPLE.value, Field.SNAKE_BODY.value, Field.WALL.value]
         while True:
             try:
-                if self.board[y][x] in intersecting_categories and not first_shot:
+                if self.board[y][x] in intersecting_categories:
                     distance = number_of_steps_in_direction/(self._max_distance - 1)
                     return distance, self.board[y][x]
-                first_shot = False
                 # boundary check and increment
-                if (self.snake.size_x > x + x_step >= 0 and
-                        self.snake.size_y > y + y_step >= 0):
+                if (self.snake.size_x > x + x_step >= 0 and self.snake.size_y > y + y_step >= 0):
                     x = x + x_step
                     y = y + y_step
                     number_of_steps_in_direction += 1
