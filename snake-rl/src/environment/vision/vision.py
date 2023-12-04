@@ -74,7 +74,7 @@ class Vision:
         return 1., Field.WALL.value
 
     def get_food_direction_vector(self, food:Block):
-        x, y = self._get_food_direction(food)
+        x, y = self._get_food_distance(food)
         indicators = np.zeros(10)
         # binary indicators
         indicators[0] = x > 0
@@ -84,13 +84,31 @@ class Vision:
         indicators[4] = y == 0
         indicators[5] = y < 0
         # distance indicators
+        if self.is_penetration_active:
+            indicators = self.get_food_direction_with_transparency(indicators, x, y)
+        else:
+            indicators = self._get_food_direction_without_transparency(indicators, x, y)
+        return indicators
+
+    def _get_food_direction_without_transparency(self, indicators:np.array, x:float, y:float):
         indicators[6] = x * indicators[0]
         indicators[7] = np.abs(x) * indicators[2]
         indicators[8] = y * indicators[3]
         indicators[9] = np.abs(y) * indicators[5]
         return indicators
 
-    def _get_food_direction(self, food: Block):
+    def get_food_direction_with_transparency(self, indicators:np.array, x:float, y:float):
+        if x != 0:
+            indicators[6] = x if indicators[0] else 1 - np.abs(x)
+            indicators[7] = np.abs(x) if indicators[2] else 1 - np.abs(x)
+        if y != 0:
+            indicators[8] = y if indicators[3] else 1 - np.abs(y)
+            indicators[9] = np.abs(y) if indicators[5] else 1 - np.abs(y)
+        return indicators
+
+
+
+    def _get_food_distance(self, food: Block):
         x, y = self.snake.head - food
         direction = self.snake.direction
         match direction:

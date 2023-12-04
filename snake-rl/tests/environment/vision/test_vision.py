@@ -352,7 +352,7 @@ def test_look_with_food_without_penetration(snake_direction,
     (Direction.DOWN, 10, 20, 1, 1, 5, 8, -0.4, -0.35),
     (Direction.LEFT, 10, 20, 1, 1, 5, 8, 0.35, -0.4),
     ])
-def test__get_food_direction(direction, board_size_x, board_size_y, snake_head_x, snake_head_y, food_x, food_y, expected_x, expected_y):
+def test__get_food_distance(direction, board_size_x, board_size_y, snake_head_x, snake_head_y, food_x, food_y, expected_x, expected_y):
     snake = Snake(board_size_x, board_size_y)
     snake.body = [Block(snake_head_x, snake_head_y)]
     snake.direction = direction
@@ -360,29 +360,40 @@ def test__get_food_direction(direction, board_size_x, board_size_y, snake_head_x
     board[food_y][food_x] = Field.APPLE.value
     food = Block(food_x, food_y)
     vision = Vision(snake, board)
-    dx, dy = vision._get_food_direction(food)
+    dx, dy = vision._get_food_distance(food)
     assert dx == expected_x
     assert dy == expected_y
 
-@pytest.mark.parametrize("board_size_x, board_size_y, dir_x, dir_y, expected", [
-    (10, 10, 0.4, 0.4, [1, 0, 0, 1, 0, 0, 0.4, 0, 0.4, 0]),
-    (10, 10, 0.4, 0.0, [1, 0, 0, 0, 1, 0, 0.4, 0, 0, 0]),
-    (10, 10, 0.25, -0.75, [1, 0, 0, 0, 0, 1, 0.25, 0, 0, 0.75]),
-    (10, 10, 0, 0.22, [0, 1, 0, 1, 0, 0, 0, 0, 0.22, 0]),
-    (10, 10, 0, 0, [0, 1, 0, 0, 1, 0, 0, 0, 0, 0]),
-    (10, 10, 0, -.8, [0, 1, 0, 0, 0, 1, 0, 0, 0, 0.8]),
-    (10, 10, -0.55, 0.4, [0, 0, 1, 1, 0, 0, 0, 0.55, 0.4, 0]),
-    (10, 10, -0.85, 0, [0, 0, 1, 0, 1, 0, 0, 0.85, 0, 0]),
-    (10, 10, -0.85, -0.85, [0, 0, 1, 0, 0, 1, 0, 0.85, 0, 0.85]),
+@pytest.mark.parametrize("board_size_x, board_size_y, dir_x, dir_y, penetration_active, expected", [
+    (10, 10, 0.4, 0.4, False, [1, 0, 0, 1, 0, 0, 0.4, 0, 0.4, 0]),
+    (10, 10, 0.4, 0.0, False, [1, 0, 0, 0, 1, 0, 0.4, 0, 0, 0]),
+    (10, 10, 0.25, -0.75, False, [1, 0, 0, 0, 0, 1, 0.25, 0, 0, 0.75]),
+    (10, 10, 0, 0.22, False, [0, 1, 0, 1, 0, 0, 0, 0, 0.22, 0]),
+    (10, 10, 0, 0, False, [0, 1, 0, 0, 1, 0, 0, 0, 0, 0]),
+    (10, 10, 0, -.8, False, [0, 1, 0, 0, 0, 1, 0, 0, 0, 0.8]),
+    (10, 10, -0.55, 0.4, False, [0, 0, 1, 1, 0, 0, 0, 0.55, 0.4, 0]),
+    (10, 10, -0.85, 0, False, [0, 0, 1, 0, 1, 0, 0, 0.85, 0, 0]),
+    (10, 10, -0.85, -0.85, False, [0, 0, 1, 0, 0, 1, 0, 0.85, 0, 0.85]),
+    (10, 10, 0.4, 0.4, True, [1, 0, 0, 1, 0, 0, 0.4, 0.6, 0.4, 0.6]),
+    (10, 10, 0.4, 0.0, True, [1, 0, 0, 0, 1, 0, 0.4, 0.6, 0, 0]),
+    (10, 10, 0.25, -0.75, True, [1, 0, 0, 0, 0, 1, 0.25, 0.75, 0.25, 0.75]),
+    (10, 10, 0, 0.22, True, [0, 1, 0, 1, 0, 0, 0, 0, 0.22, 0.78]),
+    (10, 10, 0, 0, True, [0, 1, 0, 0, 1, 0, 0, 0, 0, 0]),
+    (10, 10, 0, -.8, True, [0, 1, 0, 0, 0, 1, 0, 0, 0.2, 0.8]),
+    (10, 10, -0.55, 0.4, True, [0, 0, 1, 1, 0, 0, 0.45, 0.55, 0.4, 0.6]),
+    (10, 10, -0.85, 0, True, [0, 0, 1, 0, 1, 0, 0.15, 0.85, 0, 0]),
+    (10, 10, -0.85, -0.85, True, [0, 0, 1, 0, 0, 1, 0.15, 0.85, 0.15, 0.85]),
+    (10, 10, 0.4, -0.8, False, [1, 0, 0, 0, 0, 1, 0.4, 0, 0.0, 0.8]),
+    (10, 10, 0.4, -0.8, True, [1, 0, 0, 0, 0, 1, 0.4, 0.6, 0.2, 0.8]),
 
 ])
-def test_get_food_direction_vector(board_size_x, board_size_y, dir_x, dir_y, expected):
-    snake = Snake(board_size_x, board_size_y)
+def test_get_food_direction_vector(board_size_x, board_size_y, penetration_active, dir_x, dir_y, expected):
+    snake = Snake(board_size_x, board_size_y, is_penetration_active=penetration_active)
     board = np.ones((board_size_y, board_size_x)) * Field.EMPTY.value
     vision = Vision(snake, board)
-    with mock.patch.object(Vision, '_get_food_direction', return_value=(dir_x, dir_y)):
+    with mock.patch.object(Vision, '_get_food_distance', return_value=(dir_x, dir_y)):
         function_result = vision.get_food_direction_vector(Block(0, 0))
-    assert np.array_equal(function_result, np.array(expected))
+    assert np.array_equal(function_result.round(4), np.array(expected))
 
 @pytest.mark.parametrize("board_size_x, board_size_y, snake_head_x, snake_head_y, food_x, food_y, raycasting_directions, expected", [
     (10, 10, 1, 1, 3, 1,
