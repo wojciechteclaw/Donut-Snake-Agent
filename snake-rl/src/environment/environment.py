@@ -107,7 +107,7 @@ class Environment:
                 'x_rows': self.size_x,
                 'y_rows': self.size_y,
                 'environment_object': self.get_board().tolist(),
-                'is_sphere': self.is_penetration_active,
+                'is_donut': self.is_penetration_active,
                 'score': self.score,
                 'reward': self.reward,
                 'is_alive': self.snake.alive,
