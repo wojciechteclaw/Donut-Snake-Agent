@@ -1,20 +1,41 @@
-version: '3.9'
+version: '1.0'
 
 services:
-  frontend:
+  
+  snake-front:
     container_name: snake-front
     build:
       context: snake-visualizer/.
       dockerfile: Dockerfile
     image: snake-front
+    networks:
+      - snake-net
     ports:
       - 3001:80
-  backend:
+  
+  snake-transmiter:
     container_name: snake-transmiter
     build:
       context: transmiter/.
       dockerfile: Dockerfile
     image: snake-transmiter
+    networks:
+      - snake-net
     ports:
       - 5001:5001
     restart: unless-stopped
+
+  snake-rl:
+    container_name: snake-rl
+    build:
+      context: snake-rl/.
+      dockerfile: Dockerfile
+    image: snake-rl
+    restart: unless-stopped
+    networks:
+      - snake-net
+    depends_on:
+      - snake-transmiter
+
+networks:
+  snake-net:

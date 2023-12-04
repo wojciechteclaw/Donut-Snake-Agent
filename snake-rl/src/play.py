@@ -16,7 +16,9 @@ def play(**kwargs):
                               size_y=board_y_size,
                               device=device,
                               is_penetration_active=is_penetration_active,
-                              publish_environment=publish_environment)
+                              publish_environment=publish_environment,
+                              publish_address=kwargs.get('publish_address', 'http://localhost:5001')
+                              )
     environment.reset()
     while True:
         state_0 = agent.get_state(environment)
@@ -41,7 +43,6 @@ settings = {
     'gamma': 0.85,
     'epsilon': 0.00,
     'publish_environment': True,
-    'number_of_games_to_end_epsilon': 500,
     # environment
     'board_x_size': 14,
     'board_y_size': 14,
@@ -50,9 +51,10 @@ settings = {
     'hidden_layer_size': 512,
     'file_name': 'q_learning_net_v2_old_food_vectoring',
     'load_model': False,
-    'device': 'cuda' if torch.cuda.is_available() else 'cpu',
+    'device': 'cpu',
     'step_delay': 0.05,
-    'mode': 'play'
+    'mode': 'play',
+    'publish_address': 'http://snake-transmiter:5001'
 }
 
 if __name__ == '__main__':

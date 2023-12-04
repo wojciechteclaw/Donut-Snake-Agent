@@ -6,6 +6,14 @@ The agent part structure is inspired by <a href='https://github.com/patrickloebe
 
 ![Snake](snake-rl/docs/snake.gif)
 
+## Run DEMO
+
+`docker-compose up`
+
+**Runs using pretrained model from:**
+
+`/snake-rl/models/q_learning_net_v2.pt`
+
 # Structure
 ## TRANSMITER
 
@@ -32,10 +40,6 @@ It uses following json properties:
 * `number_of_steps (int)` - total number of steps in the game
 * `number_of_steps_without_food (int)` - number of steps since the last chunk of food was found
 * `number_of_games (int)` - total number of games
-
-## Run SNAKE-VISUALIZER + TRANSMITER
-
-`docker-compose up`
 
 
 ## SNAKE-RL 

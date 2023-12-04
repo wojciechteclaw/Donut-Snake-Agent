@@ -11,7 +11,6 @@ from src.environment.vision.vision import Vision
 
 class Environment:
 
-    PUBLISHER_ADDRESS = 'http://127.0.0.1:5001'
     CLASH_REWARD = -2.5
     FOOD_REWARD = 1
     STEP_REWARD = -0.025
@@ -20,7 +19,8 @@ class Environment:
                  size_y:int=10,
                  device:torch.device = 'cpu',
                  is_penetration_active:bool=False,
-                 publish_environment:bool=False):
+                 publish_environment:bool=False,
+                 publish_address='http://127.0.0.1:5001'):
         self.number_of_steps_without_food = 0
         self.number_of_turns_without_food = 0
         self.number_of_steps = 0
@@ -33,6 +33,7 @@ class Environment:
                            size_y=size_y,
                            is_penetration_active=is_penetration_active)
         self.reward = 0
+        self.PUBLISHER_ADDRESS = publish_address
         self.update_environment = publish_environment
 
     def reset(self):

@@ -10,4 +10,6 @@ COPY . .
 
 RUN pip install --upgrade pip
 
+ENV PYTHONPATH /app
+
 CMD [ "python", "src/play.py" ]

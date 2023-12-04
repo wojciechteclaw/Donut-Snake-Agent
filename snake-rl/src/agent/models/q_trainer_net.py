@@ -53,10 +53,10 @@ class QTrainerNet(nn.Module):
         path = os.path.join(folder_path, model_name)
         if os.path.exists(path + '.pt'):
             print(f'Loading model: {model_name} state dictionary')
-            self.model.load_state_dict(torch.load(path + '.pt'))
+            self.model.load_state_dict(torch.load(path + '.pt', map_location=torch.device('cpu')))
         elif os.path.exists(path + '.pth'):
             print(f'Loading model: {model_name}')
-            self.model = torch.load(path + '.pth')
+            self.model = torch.load(path + '.pth', map_location=torch.device('cpu'))
         else:
             print('there is no model to load')
 
