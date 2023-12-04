@@ -266,7 +266,15 @@ def test_look_without_food(snake_direction,
     (Direction.UP, 10, 10, 1, 1, 5, 8, 0.4, 0.7),
     (Direction.RIGHT, 10, 10, 1, 1, 5, 8, -0.7, 0.4),
     (Direction.DOWN, 10, 10, 1, 1, 5, 8, -0.4, -0.7),
-    (Direction.LEFT, 10, 10, 1, 1, 5, 8, 0.7, -0.4)
+    (Direction.LEFT, 10, 10, 1, 1, 5, 8, 0.7, -0.4),
+    (Direction.UP, 20, 10, 1, 1, 5, 8, 0.2, 0.7),
+    (Direction.RIGHT, 20, 10, 1, 1, 5, 8, -0.7, 0.2),
+    (Direction.DOWN, 20, 10, 1, 1, 5, 8, -0.2, -0.7),
+    (Direction.LEFT, 20, 10, 1, 1, 5, 8, 0.7, -0.2),
+    (Direction.UP, 10, 20, 1, 1, 5, 8, 0.4, 0.35),
+    (Direction.RIGHT, 10, 20, 1, 1, 5, 8, -0.35, 0.4),
+    (Direction.DOWN, 10, 20, 1, 1, 5, 8, -0.4, -0.35),
+    (Direction.LEFT, 10, 20, 1, 1, 5, 8, 0.35, -0.4),
     ])
 def test__get_food_direction(direction, board_size_x, board_size_y, snake_head_x, snake_head_y, food_x, food_y, expected_x, expected_y):
     snake = Snake(board_size_x, board_size_y)

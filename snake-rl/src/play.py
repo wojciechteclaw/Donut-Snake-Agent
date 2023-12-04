@@ -44,8 +44,8 @@ settings = {
     'epsilon': 0.00,
     'publish_environment': True,
     # environment
-    'board_x_size': 10,
-    'board_y_size': 10,
+    'board_x_size': 8,
+    'board_y_size': 14,
     'is_penetration_active': False,
     # model
     'hidden_layer_size': 512,
