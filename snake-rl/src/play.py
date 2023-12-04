@@ -44,8 +44,8 @@ settings = {
     'epsilon': 0.00,
     'publish_environment': True,
     # environment
-    'board_x_size': 14,
-    'board_y_size': 14,
+    'board_x_size': 8,
+    'board_y_size': 12,
     'is_penetration_active': False,
     # model
     'hidden_layer_size': 512,
@@ -54,7 +54,7 @@ settings = {
     'device': 'cpu',
     'step_delay': 0.05,
     'mode': 'play',
-    'publish_address': 'http://snake-transmiter:5001'
+    # 'publish_address': 'http://snake-transmiter:5001'
 }
 
 if __name__ == '__main__':
