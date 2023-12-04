@@ -4,7 +4,7 @@ Welcome on the repo presenting my own implementation of Reinforcement Learning u
 
 The agent part structure is inspired by <a href='https://github.com/patrickloeber/snake-ai-pytorch'>Patrick Loebers</a> work.
 
-![Snake](snake-rl/docs/snake.gif)
+![Snake](./snake-rl/docs/snake.gif)
 
 ## Run DEMO
 
@@ -12,7 +12,7 @@ The agent part structure is inspired by <a href='https://github.com/patrickloebe
 
 **Runs using pretrained model from:**
 
-`/snake-rl/models/q_learning_net_v2.pt`
+`/snake-rl/src/models/q_learning_net_v2.pt`
 
 # Structure
 ## TRANSMITER
@@ -21,14 +21,14 @@ It's a simple flask project enabling the communication between environment state
 
 It contains two endpoints:
 
-#### /publish-environment
+#### /publish-environment @Post
 Gets json data and emits it using socketio for listeners observing `new_environment` event
 
-#### /health
+#### /health @Get
 Returns ok if service is available.
 
 ## SNAKE-VISUALIZER
-React + Three.js application visualizing snake in 2D grid of boxes.
+Simple React + Three.js application for visualizing snake in 2D grid of boxes.
 
 It uses following json properties:
 * `x_rows (int)` - gives number of columns in x direction
