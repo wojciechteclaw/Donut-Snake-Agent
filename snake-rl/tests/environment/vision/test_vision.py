@@ -260,3 +260,42 @@ def test_look_without_food(snake_direction,
     expected_distances, expected_targets = expected
     assert result_targets == expected_targets
     assert result_distances == expected_distances
+
+
+@pytest.mark.parametrize("direction, board_size_x, board_size_y, snake_head_x, snake_head_y, food_x, food_y, expected_x, expected_y", [
+    (Direction.UP, 10, 10, 1, 1, 5, 8, 0.4, 0.7),
+    (Direction.RIGHT, 10, 10, 1, 1, 5, 8, -0.7, 0.4),
+    (Direction.DOWN, 10, 10, 1, 1, 5, 8, -0.4, -0.7),
+    (Direction.LEFT, 10, 10, 1, 1, 5, 8, 0.7, -0.4)
+    ])
+def test__get_food_direction(direction, board_size_x, board_size_y, snake_head_x, snake_head_y, food_x, food_y, expected_x, expected_y):
+    snake = Snake(board_size_x, board_size_y)
+    snake.body = [Block(snake_head_x, snake_head_y)]
+    snake.direction = direction
+    board = np.ones((board_size_y, board_size_x)) * Field.EMPTY.value
+    board[food_y][food_x] = Field.APPLE.value
+    food = Block(food_x, food_y)
+    vision = Vision(snake, board)
+    dx, dy = vision._get_food_direction(food)
+    assert dx == expected_x
+    assert dy == expected_y
+
+@pytest.mark.parametrize("board_size_x, board_size_y, dir_x, dir_y, expected", [
+    (10, 10, 0.4, 0.4, [1, 0, 0, 1, 0, 0, 0.4, 0, 0.4, 0]),
+    (10, 10, 0.4, 0.0, [1, 0, 0, 0, 1, 0, 0.4, 0, 0, 0]),
+    (10, 10, 0.25, -0.75, [1, 0, 0, 0, 0, 1, 0.25, 0, 0, 0.75]),
+    (10, 10, 0, 0.22, [0, 1, 0, 1, 0, 0, 0, 0, 0.22, 0]),
+    (10, 10, 0, 0, [0, 1, 0, 0, 1, 0, 0, 0, 0, 0]),
+    (10, 10, 0, -.8, [0, 1, 0, 0, 0, 1, 0, 0, 0, 0.8]),
+    (10, 10, -0.55, 0.4, [0, 0, 1, 1, 0, 0, 0, 0.55, 0.4, 0]),
+    (10, 10, -0.85, 0, [0, 0, 1, 0, 1, 0, 0, 0.85, 0, 0]),
+    (10, 10, -0.85, -0.85, [0, 0, 1, 0, 0, 1, 0, 0.85, 0, 0.85]),
+
+])
+def test_get_food_direction_vector(board_size_x, board_size_y, dir_x, dir_y, expected):
+    snake = Snake(board_size_x, board_size_y)
+    board = np.ones((board_size_y, board_size_x)) * Field.EMPTY.value
+    vision = Vision(snake, board)
+    with mock.patch.object(Vision, '_get_food_direction', return_value=(dir_x, dir_y)):
+        function_result = vision.get_food_direction_vector(Block(0, 0))
+    assert np.array_equal(function_result, np.array(expected))

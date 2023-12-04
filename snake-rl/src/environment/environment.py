@@ -69,27 +69,11 @@ class Environment:
             return True
         return False
 
-    def get_food_direction_vector(self):
-        x, y = self.get_food_direction()
-        indicators = np.zeros(10)
-        # binary indicators
-        indicators[0] = x > 0
-        indicators[1] = x == 0
-        indicators[2] = x < 0
-        indicators[3] = y > 0
-        indicators[4] = y == 0
-        indicators[5] = y < 0
-        # distance indicators
-        indicators[6] = x * indicators[0]
-        indicators[7] = np.abs(x) * indicators[2]
-        indicators[8] = y * indicators[3]
-        indicators[9] = np.abs(y) * indicators[5]
-        return indicators
-
     def observe(self):
         board = self.get_board()
-        distance, target_type = Vision(self.snake, board).look()
-        food = self.get_food_direction_vector()
+        vision = Vision(self.snake, board)
+        distance, target_type = vision.look()
+        food = vision.get_food_direction_vector(self.food)
         snake_direction_vector = self.snake.get_direction_vector()
         return (np.array(distance),
                 np.array(target_type),
@@ -116,20 +100,6 @@ class Environment:
         return (torch.tensor(self.reward, dtype=torch.float).to(self.device),
                 torch.tensor(self.snake.alive, dtype=torch.int).to(self.device),
                 torch.tensor(self.score, dtype=torch.float).to(self.device))
-
-    def get_food_direction(self):
-        x, y = self.snake.head - self.food
-        direction = self.snake.direction
-        normalizer = max(self.size_x, self.size_y)
-        match direction:
-            case Direction.UP:
-                return np.array([x, y])/normalizer
-            case Direction.RIGHT:
-                return np.array([-y, x])/normalizer
-            case Direction.DOWN:
-                return np.array([-x, -y])/normalizer
-            case Direction.LEFT:
-                return np.array([y, -x])/normalizer
 
     def publish_environment(self, extra:dict = {}):
         try:

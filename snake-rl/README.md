@@ -147,6 +147,26 @@ Return two tuples of eight elements:
 * distances (0-1)
 * targets (Field enum)
 
+### get_food_direction_vector
+Return vector of 10 elements:
+
+first 6 elements are binary indicators of direction to food:
+* `x+` (1 if food is on the right side of the snake head)
+* `x0` (1 if food is on the same x axis as snake head)
+* `x-` (1 if food is on the left side of the snake head)
+* `y+` (1 if food is on the top side of the snake head)
+* `y0` (1 if food is on the same y axis as snake head)
+* `y-` (1 if food is on the bottom side of the snake head)
+
+Next four describe the distance to food in each direction:
+* `x+` (distance to food on the right side of the snake head)
+* `x-` (distance to food on the left side of the snake head)
+* `y+` (distance to food on the top side of the snake head)
+* `y-` (distance to food on the bottom side of the snake head)
+
+### _get_food_direction
+Return direction to food as normalized np.array in the reference to the snake direction.
+
 ## Environment
 
 ### Parameters
@@ -186,23 +206,6 @@ Return board with all items as np.array
 ### check_food
 Check if snake head is on the food position.
 
-### get_food_direction_vector
-Return vector of 10 elements:
-
-first 6 elements are binary indicators of direction to food:
-* `x+` (1 if food is on the right side of the snake head)
-* `x0` (1 if food is on the same x axis as snake head)
-* `x-` (1 if food is on the left side of the snake head)
-* `y+` (1 if food is on the top side of the snake head)
-* `y0` (1 if food is on the same y axis as snake head)
-* `y-` (1 if food is on the bottom side of the snake head)
-
-Next four describe the distance to food in each direction:
-* `x+` (distance to food on the right side of the snake head)
-* `x-` (distance to food on the left side of the snake head)
-* `y+` (distance to food on the top side of the snake head)
-* `y-` (distance to food on the bottom side of the snake head)
-
 ### observe
 Return observation of the environment as np.array
 * `distance`
@@ -219,9 +222,6 @@ It returns torch tensors of:
 * `reward`
 * `is_snake_alive`
 * `score`
-
-### get_food_direction
-Return direction to food as normalized np.array in the reference to the snake direction.
 
 # Agent
 **TO Document**

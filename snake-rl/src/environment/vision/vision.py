@@ -1,6 +1,9 @@
 import numpy as np
+
+from src.environment.enums.direction import Direction
 from src.environment.enums.field import Field
 from src.environment.enums.raycasting_direction import RaycastingDirection
+from src.environment.snake.block import Block
 from src.environment.snake.snake import Snake
 from collections import deque
 
@@ -54,6 +57,36 @@ class Vision:
             else:
                 break
         return number_of_steps_in_direction / normalization_factor, Field.WALL.value
+
+    def get_food_direction_vector(self, food:Block):
+        x, y = self._get_food_direction(food)
+        indicators = np.zeros(10)
+        # binary indicators
+        indicators[0] = x > 0
+        indicators[1] = x == 0
+        indicators[2] = x < 0
+        indicators[3] = y > 0
+        indicators[4] = y == 0
+        indicators[5] = y < 0
+        # distance indicators
+        indicators[6] = x * indicators[0]
+        indicators[7] = np.abs(x) * indicators[2]
+        indicators[8] = y * indicators[3]
+        indicators[9] = np.abs(y) * indicators[5]
+        return indicators
+
+    def _get_food_direction(self, food: Block):
+        x, y = self.snake.head - food
+        direction = self.snake.direction
+        match direction:
+            case Direction.UP:
+                return np.array([x / self._x_max_distance, y / self._y_max_distance])
+            case Direction.RIGHT:
+                return np.array([-y / self._y_max_distance, x / self._x_max_distance])
+            case Direction.DOWN:
+                return np.array([-x / self._x_max_distance, -y / self._y_max_distance])
+            case Direction.LEFT:
+                return np.array([y / self._y_max_distance, -x / self._x_max_distance])
 
     def look(self):
         raycasting_directions = self._rotate_from_direction()
