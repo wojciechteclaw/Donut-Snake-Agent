@@ -241,14 +241,14 @@ def test__get_direction_normalization_factor(board_size_x, board_size_y, raycast
     ]),
 
 ])
-def test_look_without_food(snake_direction,
-                           board_size_x,
-                           board_size_y,
-                           board_position_x,
-                           board_position_y,
-                           food_position_x,
-                           food_position_y,
-                           expected):
+def test_look_without_food_without_penetration(snake_direction,
+                                               board_size_x,
+                                               board_size_y,
+                                               board_position_x,
+                                               board_position_y,
+                                               food_position_x,
+                                               food_position_y,
+                                               expected):
     s = Snake(board_size_x, board_size_y)
     s.direction = snake_direction
     s.body = [Block(board_position_x, board_position_y)]
@@ -260,6 +260,82 @@ def test_look_without_food(snake_direction,
     expected_distances, expected_targets = expected
     assert result_targets == expected_targets
     assert result_distances == expected_distances
+
+
+@pytest.mark.parametrize("""snake_direction, board_size_x, board_size_y, board_position_x, board_position_y, food_position_x, food_position_y, expected""", [
+    (Direction.UP, 5, 5, 2, 2, 4, 4, [
+        [1.0, 0.4, 1.0, 1.0, 1.0, 0.6, 1.0, 1.0],
+        [Field.WALL.value, Field.APPLE.value, Field.WALL.value, Field.WALL.value,
+         Field.WALL.value, Field.APPLE.value, Field.WALL.value, Field.WALL.value]
+    ]),
+    (Direction.UP, 5, 5, 1, 1, 4, 4, [
+        [1.0, 0.6, 1.0, 1.0, 1.0, 0.4, 1.0, 1.0],
+        [Field.WALL.value, Field.APPLE.value, Field.WALL.value, Field.WALL.value,
+         Field.WALL.value, Field.APPLE.value, Field.WALL.value, Field.WALL.value]
+    ]),
+    (Direction.RIGHT, 5, 5, 2, 2, 4, 4, [
+        [1.0, 1.0, 1.0, 0.6, 1.0, 1.0, 1.0, 0.4],
+        [Field.WALL.value, Field.WALL.value, Field.WALL.value, Field.APPLE.value,
+         Field.WALL.value, Field.WALL.value, Field.WALL.value, Field.APPLE.value]
+    ]),
+    (Direction.RIGHT, 5, 5, 1, 1, 4, 4, [
+        [1.0, 1.0, 1.0, 0.4, 1.0, 1.0, 1.0, 0.6],
+        [Field.WALL.value, Field.WALL.value, Field.WALL.value, Field.APPLE.value,
+         Field.WALL.value, Field.WALL.value, Field.WALL.value, Field.APPLE.value]
+    ]),
+    (Direction.DOWN, 5, 5, 2, 2, 4, 4, [
+        [1.0, 0.6, 1.0, 1.0, 1.0, 0.4, 1.0, 1.0],
+        [Field.WALL.value, Field.APPLE.value, Field.WALL.value, Field.WALL.value,
+         Field.WALL.value, Field.APPLE.value,Field.WALL.value, Field.WALL.value]
+    ]),
+    (Direction.DOWN, 5, 5, 1, 1, 4, 4, [
+        [1.0, 0.4, 1.0, 1.0, 1.0, 0.6, 1.0, 1.0],
+        [Field.WALL.value, Field.APPLE.value, Field.WALL.value, Field.WALL.value,
+         Field.WALL.value, Field.APPLE.value, Field.WALL.value, Field.WALL.value]
+    ]),
+
+    (Direction.LEFT, 5, 5, 2, 2, 4, 4, [
+        [1.0, 1.0, 1.0, 0.4, 1.0, 1.0, 1.0, 0.6],
+        [Field.WALL.value, Field.WALL.value, Field.WALL.value, Field.APPLE.value,
+         Field.WALL.value, Field.WALL.value, Field.WALL.value, Field.APPLE.value]
+    ]),
+    (Direction.LEFT, 5, 5, 1, 1, 4, 4, [
+        [1.0, 1.0, 1.0, 0.6, 1.0, 1.0, 1.0, 0.4],
+        [Field.WALL.value, Field.WALL.value, Field.WALL.value, Field.APPLE.value,
+         Field.WALL.value, Field.WALL.value, Field.WALL.value, Field.APPLE.value]
+    ]),
+    (Direction.UP, 10, 5, 2, 2, 4, 4, [
+        [1.0, 0.4, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
+        [Field.WALL.value, Field.APPLE.value, Field.WALL.value, Field.WALL.value,
+         Field.WALL.value, Field.WALL.value, Field.WALL.value, Field.WALL.value]
+    ]),
+    (Direction.UP, 5, 10, 1, 1, 4, 4, [
+        [1.0, 0.6, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
+        [Field.WALL.value, Field.APPLE.value, Field.WALL.value, Field.WALL.value,
+         Field.WALL.value, Field.WALL.value, Field.WALL.value, Field.WALL.value]
+    ]),
+
+])
+def test_look_with_food_without_penetration(snake_direction,
+                                               board_size_x,
+                                               board_size_y,
+                                               board_position_x,
+                                               board_position_y,
+                                               food_position_x,
+                                               food_position_y,
+                                               expected):
+    s = Snake(board_size_x, board_size_y, is_penetration_active=True)
+    s.direction = snake_direction
+    s.body = [Block(board_position_x, board_position_y)]
+    board = np.ones((board_size_y, board_size_x)) * Field.EMPTY.value
+    board[food_position_y][food_position_x] = Field.APPLE.value
+    board = s.project_snake_on_board(board)
+    vision = Vision(s, board)
+    result_distances, result_targets = vision.look()
+    expected_distances, expected_targets = expected
+    assert result_targets == expected_targets
+    assert result_distances == expected_distances
+
 
 
 @pytest.mark.parametrize("direction, board_size_x, board_size_y, snake_head_x, snake_head_y, food_x, food_y, expected_x, expected_y", [
@@ -307,3 +383,45 @@ def test_get_food_direction_vector(board_size_x, board_size_y, dir_x, dir_y, exp
     with mock.patch.object(Vision, '_get_food_direction', return_value=(dir_x, dir_y)):
         function_result = vision.get_food_direction_vector(Block(0, 0))
     assert np.array_equal(function_result, np.array(expected))
+
+@pytest.mark.parametrize("board_size_x, board_size_y, snake_head_x, snake_head_y, food_x, food_y, raycasting_directions, expected", [
+    (10, 10, 1, 1, 3, 1,
+     [RaycastingDirection.NORTH, RaycastingDirection.SOUTH, RaycastingDirection.EAST, RaycastingDirection.WEST],
+     [(1, Field.WALL.value), (1, Field.WALL.value), (0.2, Field.APPLE.value), (0.8, Field.APPLE.value)]
+     ),
+    (5, 10, 1, 1, 3, 1,
+     [RaycastingDirection.NORTH, RaycastingDirection.SOUTH, RaycastingDirection.EAST, RaycastingDirection.WEST],
+     [(1, Field.WALL.value), (1, Field.WALL.value), (0.4, Field.APPLE.value), (0.6, Field.APPLE.value)]
+     ),
+    (10, 5, 1, 1, 3, 1,
+     [RaycastingDirection.NORTH, RaycastingDirection.SOUTH, RaycastingDirection.EAST, RaycastingDirection.WEST],
+     [(1, Field.WALL.value), (1, Field.WALL.value), (0.2, Field.APPLE.value), (0.8, Field.APPLE.value)]
+     ),
+    (10, 10, 1, 1, 0, 0,
+     [RaycastingDirection.NORTH_WEST, RaycastingDirection.SOUTH_EAST, RaycastingDirection.NORTH_EAST, RaycastingDirection.SOUTH_WEST],
+     [(1, Field.WALL.value), (1, Field.WALL.value), (0.9, Field.APPLE.value), (0.1, Field.APPLE.value)]
+     ),
+    (5, 10, 1, 1, 0, 0,
+     [RaycastingDirection.NORTH_WEST, RaycastingDirection.SOUTH_EAST, RaycastingDirection.NORTH_EAST, RaycastingDirection.SOUTH_WEST],
+     [(1, Field.WALL.value), (1, Field.WALL.value), (1.0, Field.WALL.value), (0.2, Field.APPLE.value)]
+     ),
+    (8, 5, 3, 2, 0, 2,
+     [RaycastingDirection.NORTH, RaycastingDirection.SOUTH, RaycastingDirection.EAST, RaycastingDirection.WEST],
+     [(1, Field.WALL.value), (1, Field.WALL.value), (0.625, Field.APPLE.value), (0.375, Field.APPLE.value)]
+     ),
+    (12, 9, 9, 2, 5, 1,
+     [RaycastingDirection.NORTH_EAST],
+     [(8/9, Field.APPLE.value)]
+     ),
+])
+
+def test__detect_obstacle_in_direction_with_wall_transparency(board_size_x, board_size_y, snake_head_x, snake_head_y, food_x, food_y, raycasting_directions, expected):
+    snake = Snake(board_size_x, board_size_y)
+    snake.body = [Block(snake_head_x, snake_head_y)]
+    board = np.ones((board_size_y, board_size_x)) * Field.EMPTY.value
+    board[food_y][food_x] = Field.APPLE.value
+    board = snake.project_snake_on_board(board)
+    vision = Vision(snake, board)
+    for i, raycasting_direction in enumerate(raycasting_directions):
+        function_result = vision._detect_obstacle_in_direction_with_wall_transparency(raycasting_direction)
+        assert function_result ==  expected[i]

@@ -39,9 +39,8 @@ class Vision:
             return self._y_max_distance
 
     def _detect_obstacle_in_direction(self, direction:RaycastingDirection):
-        start = self.snake.head
-        (x_step, y_step) = direction.value
-        x, y = start.x, start.y
+        x, y = self.snake.head.position
+        x_step, y_step = direction.value
         normalization_factor = self._get_direction_normalization_factor(direction)
         number_of_steps_in_direction = 0
         intersecting_categories = [Field.APPLE.value, Field.SNAKE_BODY.value, Field.WALL.value]
@@ -57,6 +56,22 @@ class Vision:
             else:
                 break
         return number_of_steps_in_direction / normalization_factor, Field.WALL.value
+
+    def _detect_obstacle_in_direction_with_wall_transparency(self, direction:RaycastingDirection):
+        x, y = self.snake.head.position
+        x_step, y_step = direction.value
+        normalization_factor = self._get_direction_normalization_factor(direction)
+        number_of_steps_in_direction = 0
+        intersecting_categories = [Field.APPLE.value, Field.SNAKE_BODY.value]
+        while number_of_steps_in_direction < normalization_factor:
+            if self.board[y][x] in intersecting_categories:
+                distance = number_of_steps_in_direction / normalization_factor
+                return distance, self.board[y][x]
+            else:
+                x = (x + x_step) % self._x_max_distance
+                y = (y + y_step) % self._y_max_distance
+                number_of_steps_in_direction += 1
+        return 1., Field.WALL.value
 
     def get_food_direction_vector(self, food:Block):
         x, y = self._get_food_direction(food)
@@ -91,8 +106,9 @@ class Vision:
     def look(self):
         raycasting_directions = self._rotate_from_direction()
         distances, targets = [], []
+        detection_function = self._detect_obstacle_in_direction_with_wall_transparency if self.is_penetration_active else self._detect_obstacle_in_direction
         for direction in raycasting_directions:
-            distance, target = self._detect_obstacle_in_direction(direction)
+            distance, target = detection_function(direction)
             distances.append(distance), targets.append(target)
         return distances, targets
 
