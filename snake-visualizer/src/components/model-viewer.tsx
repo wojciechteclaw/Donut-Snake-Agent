@@ -64,8 +64,8 @@ export const ModelViewer = () => {
 
     const createNewBoard = () => {
         const boxesEnv = {}
-        for (let i = 0; i < xrows; i++){
-            for (let j = 0; j < yrows; j++){
+        for (let i = 0; i < yrows; i++){
+            for (let j = 0; j < xrows; j++){
                 boxesEnv[`${i}-${j}`] = <CustomBox key={`${i}-${j}`}
                                                    x_index={i}
                                                    y_index={j}
