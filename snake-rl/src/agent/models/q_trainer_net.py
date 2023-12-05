@@ -7,13 +7,14 @@ import torch.nn as nn
 
 class QTrainerNet(nn.Module):
 
-    def __init__(self, model, lr, gamma, load=True):
+    def __init__(self, model, lr, gamma, load, model_name='q_learning_net_'):
         super().__init__()
         self.lr = lr
         self.gamma = gamma
         self.model = model
         self.optimizer = torch.optim.Adam(model.parameters(), lr=self.lr)
         self.criterion = nn.MSELoss()
+        self.model_name = model_name
         self.load_model(load)
 
     def load_model(self, load_model):
@@ -39,24 +40,18 @@ class QTrainerNet(nn.Module):
         loss.backward()
         self.optimizer.step()
 
-    def save(self, state_only = False, model_name='q_learning_net_v2'):
+    def save(self):
         folder_path = self.__get_desired_directory()
         self.__create_directory(folder_path)
-        path = os.path.join(folder_path, model_name)
-        if state_only:
-            torch.save(self.model.state_dict(), path + '.pt')
-        else:
-            torch.save(self.model, path + '.pth')
+        path = os.path.join(folder_path, self.model_name + ".pth")
+        torch.save(self.model.state_dict(), path)
 
-    def load(self, model_name='q_learning_net_v2'):
+    def load(self):
         folder_path = self.__get_desired_directory()
-        path = os.path.join(folder_path, model_name)
-        if os.path.exists(path + '.pt'):
-            print(f'Loading model: {model_name} state dictionary')
-            self.model.load_state_dict(torch.load(path + '.pt', map_location=torch.device('cpu')))
-        elif os.path.exists(path + '.pth'):
-            print(f'Loading model: {model_name}')
-            self.model = torch.load(path + '.pth', map_location=torch.device('cpu'))
+        path = os.path.join(folder_path, self.model_name + ".pth")
+        if os.path.exists(path):
+            print(f'Loading model: {self.model_name} state dictionary')
+            self.model.load_state_dict(torch.load(path, map_location=torch.device('cpu')))
         else:
             print('there is no model to load')
 
