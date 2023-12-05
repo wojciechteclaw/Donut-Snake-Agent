@@ -19,12 +19,12 @@ def test_board_reset():
     environment.snake = snake
     environment.food = Block(6, 5)
     environment.move_snake(1)
-    assert environment.reward == (Environment.FOOD_REWARD + Environment.STEP_REWARD)
+    assert environment.reward == (Environment.FOOD_REWARD + environment.STEP_REWARD)
     assert environment.score == 1
     environment.food = Block(7, 5)
     environment.move_snake(1)
     assert environment.score == 2
-    assert round(environment.reward, 3) == (Environment.FOOD_REWARD + Environment.STEP_REWARD) * 2
+    assert round(environment.reward, 3) == (Environment.FOOD_REWARD + environment.STEP_REWARD) * 2
     environment.reset()
     assert environment.score == 0
     assert environment.reward == 0
@@ -34,12 +34,12 @@ def test_clash_reward():
     snake = Snake(10, 10)
     snake.body = [Block(9, 5), Block(8, 5), Block(7, 5), Block(6, 5)]
     snake.direction = Direction.RIGHT
-    board = Environment(10, 10)
-    board.reset()
-    board.snake = snake
-    board.move_snake(1)
-    assert board.reward == Environment.CLASH_REWARD + Environment.STEP_REWARD
-    assert board.snake.alive == False
+    environment = Environment(10, 10)
+    environment.reset()
+    environment.snake = snake
+    environment.move_snake(1)
+    assert environment.reward == Environment.CLASH_REWARD + environment.STEP_REWARD
+    assert environment.snake.alive == False
 
 def test_snake_body_clash_reward():
     snake = Snake(10, 10)
@@ -50,24 +50,24 @@ def test_snake_body_clash_reward():
                   Block(6, 6),
                   Block(7, 6)]
     snake.direction = Direction.LEFT
-    board = Environment(10, 10)
-    board.reset()
-    board.snake = snake
-    board.move_snake(1)
-    assert round(board.reward, 3) == Environment.CLASH_REWARD + Environment.STEP_REWARD
-    assert board.snake.alive == False
+    environment = Environment(10, 10)
+    environment.reset()
+    environment.snake = snake
+    environment.move_snake(1)
+    assert round(environment.reward, 3) == Environment.CLASH_REWARD + environment.STEP_REWARD
+    assert environment.snake.alive == False
 
 def test_check_food():
     with mock.patch.object(random, 'randint', return_value=5):
         snake = Snake(10, 10)
-    board = Environment(10, 10)
-    board.snake = snake
-    assert board.snake.head == Block(5, 5)
-    board.food = Block(6, 5)
-    assert board.check_food() == False
-    board.snake.move(1)
-    assert board.snake.head == Block(6, 5)
-    assert board.check_food() == True
+    environment = Environment(10, 10)
+    environment.snake = snake
+    assert environment.snake.head == Block(5, 5)
+    environment.food = Block(6, 5)
+    assert environment.check_food() == False
+    environment.snake.move(1)
+    assert environment.snake.head == Block(6, 5)
+    assert environment.check_food() == True
 
 @pytest.mark.parametrize("board_x_size, board_y_size", [
     (10, 10),
