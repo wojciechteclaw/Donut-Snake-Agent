@@ -152,8 +152,4 @@ class Snake:
         return new_direction
 
     def is_move_in_boundries(self, block:Block) -> bool:
-        if block.x < 0: return False
-        elif block.x > self.size_x - 1: return False
-        elif block.y < 0: return False
-        elif block.y > self.size_y - 1: return False
-        return True
+        return -1 < block.x < self.size_x and -1 < block.y < self.size_y

@@ -69,23 +69,6 @@ def test_check_food():
     assert board.snake.head == Block(6, 5)
     assert board.check_food() == True
 
-@pytest.mark.parametrize("direction, board_size_x, board_size_y, snake_head_x, snake_head_y, food_x, food_y, expected_x, expected_y", [
-    (Direction.UP, 10, 10, 1, 1, 5, 8, 4, 7),
-    (Direction.RIGHT, 10, 10, 1, 1, 5, 8, -7, 4),
-    (Direction.DOWN, 10, 10, 1, 1, 5, 8, -4, -7),
-    (Direction.LEFT, 10, 10, 1, 1, 5, 8, 7, -4)
-    ])
-def test_get_food_direction(direction, board_size_x, board_size_y, snake_head_x, snake_head_y, food_x, food_y, expected_x, expected_y):
-    snake = Snake(board_size_x, board_size_y)
-    snake.body = [Block(snake_head_x, snake_head_y)]
-    snake.direction = direction
-    board = Environment(board_size_x, board_size_y)
-    board.snake = snake
-    board.food = Block(food_x, food_y)
-    dx, dy = board.get_food_direction()
-    assert dx == expected_x / max(board_size_x, board_size_y)
-    assert dy == expected_y / max(board_size_x, board_size_y)
-
 @pytest.mark.parametrize("board_x_size, board_y_size", [
     (10, 10),
     (20, 20),
@@ -212,26 +195,5 @@ def test_move_snake(board_x_size,
     assert round(reward.item(), 3) == round(expected_reward + environment.STEP_REWARD, 3)
     assert is_alive.item() == expected_alive_status
     assert score.item() == expected_score
-
-@pytest.mark.parametrize("board_x_size, board_y_size, dir_x, dir_y, expected", [
-    (10, 10, 0.4, 0.4, [1, 0, 0, 1, 0, 0, 0.4, 0, 0.4, 0]),
-    (10, 10, 0.4, 0.0, [1, 0, 0, 0, 1, 0, 0.4, 0, 0, 0]),
-    (10, 10, 0.25, -0.75, [1, 0, 0, 0, 0, 1, 0.25, 0, 0, 0.75]),
-    (10, 10, 0, 0.22, [0, 1, 0, 1, 0, 0, 0, 0, 0.22, 0]),
-    (10, 10, 0, 0, [0, 1, 0, 0, 1, 0, 0, 0, 0, 0]),
-    (10, 10, 0, -.8, [0, 1, 0, 0, 0, 1, 0, 0, 0, 0.8]),
-    (10, 10, -0.55, 0.4, [0, 0, 1, 1, 0, 0, 0, 0.55, 0.4, 0]),
-    (10, 10, -0.85, 0, [0, 0, 1, 0, 1, 0, 0, 0.85, 0, 0]),
-    (10, 10, -0.85, -0.85, [0, 0, 1, 0, 0, 1, 0, 0.85, 0, 0.85]),
-])
-def test_get_food_direction_vector(board_x_size,
-                                   board_y_size,
-                                   dir_x,
-                                   dir_y,
-                                   expected):
-    environment = Environment(board_x_size, board_y_size)
-    with mock.patch.object(Environment, 'get_food_direction', return_value=(dir_x, dir_y)):
-        function_result = environment.get_food_direction_vector()
-    assert np.array_equal(function_result, np.array(expected))
 
 

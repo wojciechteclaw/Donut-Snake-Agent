@@ -147,6 +147,51 @@ Return two tuples of eight elements:
 * distances (0-1)
 * targets (Field enum)
 
+### get_food_direction_vector
+Return vector of 10 elements:
+
+first 6 elements are binary indicators (0 or 1) of direction to food:
+* `x+` (1 if food is on the right side of the snake head)
+* `x0` (1 if food is on the same x axis as snake head)
+* `x-` (1 if food is on the left side of the snake head)
+* `y+` (1 if food is on the top side of the snake head)
+* `y0` (1 if food is on the same y axis as snake head)
+* `y-` (1 if food is on the bottom side of the snake head)
+
+
+Next four describe the distance(0 to 1) to food in each direction:
+
+**WHEN snake.is_penetration_active == FALSE**
+
+* `x+` (distance to food on the right side of the snake head)
+* `x-` (distance to food on the left side of the snake head)
+* `y+` (distance to food on the top side of the snake head)
+* `y-` (distance to food on the bottom side of the snake head)
+
+
+if brick is located ie. x = 0.4 and y = -0.8, then indicators look as follow:
+
+**WHEN snake.is_penetration_active == FALSE**
+
+`[1, 0, 0, 0, 0, 1]` (binary indicators)
+
+PLUS
+
+`[0.4, 0, 0, 0.8]` (distance indicators)
+
+
+**WHEN snake.is_penetration_active == TRUE**
+
+`[1, 0, 0, 0, 0, 1]` (binary indicators)
+
+PLUS
+
+`[0.4, 0.6, 0.2, 0.8]` (distance indicators)
+
+
+### _get_food_distance
+Return direction to food as normalized np.array in the reference to the snake direction.
+
 ## Environment
 
 ### Parameters
@@ -186,23 +231,6 @@ Return board with all items as np.array
 ### check_food
 Check if snake head is on the food position.
 
-### get_food_direction_vector
-Return vector of 10 elements:
-
-first 6 elements are binary indicators of direction to food:
-* `x+` (1 if food is on the right side of the snake head)
-* `x0` (1 if food is on the same x axis as snake head)
-* `x-` (1 if food is on the left side of the snake head)
-* `y+` (1 if food is on the top side of the snake head)
-* `y0` (1 if food is on the same y axis as snake head)
-* `y-` (1 if food is on the bottom side of the snake head)
-
-Next four describe the distance to food in each direction:
-* `x+` (distance to food on the right side of the snake head)
-* `x-` (distance to food on the left side of the snake head)
-* `y+` (distance to food on the top side of the snake head)
-* `y-` (distance to food on the bottom side of the snake head)
-
 ### observe
 Return observation of the environment as np.array
 * `distance`
@@ -219,9 +247,6 @@ It returns torch tensors of:
 * `reward`
 * `is_snake_alive`
 * `score`
-
-### get_food_direction
-Return direction to food as normalized np.array in the reference to the snake direction.
 
 # Agent
 **TO Document**

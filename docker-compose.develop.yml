@@ -1,0 +1,22 @@
+version: '1.0'
+
+services:
+  
+  snake-front:
+    container_name: snake-front
+    build:
+      context: snake-visualizer/.
+      dockerfile: Dockerfile
+    image: snake-front
+    ports:
+      - 3001:80
+  
+  snake-transmiter:
+    container_name: snake-transmiter
+    build:
+      context: transmiter/.
+      dockerfile: Dockerfile
+    image: snake-transmiter
+    ports:
+      - 5001:5001
+    restart: unless-stopped

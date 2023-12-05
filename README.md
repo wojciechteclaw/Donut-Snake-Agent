@@ -4,15 +4,22 @@ Welcome on the repo presenting my own implementation of Reinforcement Learning u
 
 The agent part structure is inspired by <a href='https://github.com/patrickloeber/snake-ai-pytorch'>Patrick Loebers</a> work.
 
-![Snake](./snake-rl/docs/snake.gif)
+## Game mode
+### Without wall transparency
+![Snake](./snake-rl/docs/snake-without.gif)
+
+### With wall transparency
+![Snake](./snake-rl/docs/snake-with.gif)
 
 ## Run DEMO
 
 `docker-compose up`
 
+Runs a demo with using model
+
 **Runs using pretrained model from:**
 
-`/snake-rl/src/models/q_learning_net_v2.pt`
+`/snake-rl/src/models/q_learning_net_without_wall_transparency.pth`
 
 # Structure
 ## TRANSMITER

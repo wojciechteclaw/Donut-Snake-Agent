@@ -28,12 +28,18 @@ class Agent:
         self.publish_environment = kwargs.get('publish_environment', False)
         self.memory = deque(maxlen=self.max_memory)
         self.device = kwargs.get('device', 'cpu')
+
+        load_model = kwargs.get('load_model', False)
+        model_name = kwargs.get('model_name', 'q_learning_net')
+
         self.model = QLearningNet(input_size=30,
                                   hidden_size=self.hidden_layers,
                                   output_size=3).to(self.device)
         self.trainer = QTrainerNet(self.model,
                                    lr=self.lr,
-                                   gamma=self._gamma).to(self.device)
+                                   gamma=self._gamma,
+                                   load=load_model,
+                                   model_name =model_name).to(self.device)
 
     @property
     def number_of_games(self):
