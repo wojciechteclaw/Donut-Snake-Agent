@@ -1,5 +1,6 @@
 from enum import Enum
 
+
 class RaycastingDirection(Enum):
     NORTH = (0, 1)
     NORTH_EAST = (1, 1)

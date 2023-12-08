@@ -8,19 +8,19 @@ from src.environment.snake.block import Block
 
 class Snake:
 
-    def __init__(self, size_x:int, size_y:int , is_penetration_active:bool = False):
-        self.body:[Block] = []
+    def __init__(self, size_x: int, size_y: int, is_penetration_active: bool = False):
+        self.body: [Block] = []
         self._direction: Direction = Direction.RIGHT
-        self.size_x = size_x
-        self.size_y = size_y
-        self.alive = True
-        self.is_penetration_active = is_penetration_active
+        self.size_x: int = size_x
+        self.size_y: int = size_y
+        self.alive: bool = True
+        self.is_penetration_active: bool = is_penetration_active
         self.get_random_head()
-        self.previous_tail_brick = None
-        self.previous_direction = None
+        self.previous_tail_brick: Block | None = None
+        self.previous_direction: Direction | None = None
         self.reset()
 
-    def reset(self):
+    def reset(self) -> None:
         self.body = []
         self._direction = Direction.RIGHT
         self.alive = True
@@ -28,23 +28,23 @@ class Snake:
         self.previous_direction = None
         self.get_random_head()
 
-    def get_random_head(self):
+    def get_random_head(self) -> None:
         random_head = Block.get_random_block(self.size_x, self.size_y)
         self.body = [random_head]
 
-    def append_food(self):
+    def append_food(self) -> None:
         self.body.append(self.previous_tail_brick)
         self.previous_tail_brick = None
 
-    def insert_body(self, body:Block):
+    def insert_body(self, body: Block) -> None:
         self.body.insert(0, body)
 
-    def move(self, action:int):
+    def move(self, action: int) -> None:
         action_object = Snake.get_action_from_number(action)
         direction = self.get_direction_from_action(action_object)
         self.modify_snake(direction)
 
-    def modify_snake(self, direction:Direction):
+    def modify_snake(self, direction: Direction) -> None:
         new_head = copy(self.head)
         self.previous_direction = self.direction
         self.direction = direction
@@ -59,7 +59,7 @@ class Snake:
         self.previous_tail_brick = self.body[-1]
         self.body.pop()
 
-    def __move_block_with_penetration(self, block:Block, direction:Direction):
+    def __move_block_with_penetration(self, block: Block, direction: Direction) -> Block:
         match direction:
             case Direction.UP:
                 block.y = (block.y + 1) % self.size_y
@@ -71,7 +71,7 @@ class Snake:
                 block.x = (block.x + 1) % self.size_x
         return block
 
-    def __move_block_without_penetration(self, block:Block, direction:Direction):
+    def __move_block_without_penetration(self, block: Block, direction: Direction) -> Block:
         match direction:
             case Direction.UP:
                 block.y += 1
@@ -83,7 +83,7 @@ class Snake:
                 block.x += 1
         return block
 
-    def is_new_head_valid(self, new_head:Block) -> bool:
+    def is_new_head_valid(self, new_head: Block) -> bool:
         if not self.is_move_in_boundries(new_head):
             return False
         if self.is_self_clash(new_head):
@@ -101,13 +101,10 @@ class Snake:
         vector[self.direction.value] = 1
         return vector
 
-    def project_snake_on_board(self, board:np.ndarray):
-        try:
-            board[self.body[0].y][self.body[0].x] = Field.SNAKE_HEAD.value
-            for block in self.body[1:]:
-                board[block.y][block.x] = Field.SNAKE_BODY.value
-        except:
-            pass
+    def project_snake_on_board(self, board: np.ndarray) -> np.ndarray:
+        board[self.body[0].y][self.body[0].x] = Field.SNAKE_HEAD.value
+        for block in self.body[1:]:
+            board[block.y][block.x] = Field.SNAKE_BODY.value
         return np.array(board)
 
     @property
@@ -119,11 +116,11 @@ class Snake:
         return self._direction
 
     @direction.setter
-    def direction(self, direction:Direction):
+    def direction(self, direction: Direction) -> None:
         self._direction = direction
 
     @staticmethod
-    def get_action_from_number(action_number:int) -> Action:
+    def get_action_from_number(action_number: int) -> Action:
         match action_number:
             case 0:
                 return Action.LEFT
@@ -134,7 +131,7 @@ class Snake:
         return Action.INVALID
 
     @staticmethod
-    def get_direction_from_number(direction_number:int) -> Direction:
+    def get_direction_from_number(direction_number: int) -> Direction:
         match direction_number:
             case 0:
                 return Direction.UP
@@ -146,10 +143,10 @@ class Snake:
                 return Direction.LEFT
         return Direction.INVALID
 
-    def get_direction_from_action(self, action:Action) -> Direction:
+    def get_direction_from_action(self, action: Action) -> Direction:
         new_direction_value = self.direction.value + action.value
         new_direction = Snake.get_direction_from_number(new_direction_value % 4)
         return new_direction
 
-    def is_move_in_boundries(self, block:Block) -> bool:
+    def is_move_in_boundries(self, block: Block) -> bool:
         return -1 < block.x < self.size_x and -1 < block.y < self.size_y

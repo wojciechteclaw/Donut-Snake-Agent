@@ -11,17 +11,17 @@ class Block:
         """Compares two body blocks and returns `True` if x1 == x2 and y1 == y2, otherwise returns `False`."""
         return self.x == head.x and self.y == head.y
 
-    def __sub__(self, other: 'Block'):
+    def __sub__(self, other: 'Block') -> tuple[int, int]:
         """Subtracts two body blocks and returns a tuple of x and y coordinates."""
         return other.x - self.x, other.y - self.y
 
     @property
-    def position(self) -> list:
+    def position(self) -> tuple[int, int]:
         """Returns the position of the body block as a tuple of x and y coordinates."""
-        return [self.x, self.y]
+        return self.x, self.y
 
     @staticmethod
-    def get_random_block(max_x:int, max_y:int) -> 'Block':
+    def get_random_block(max_x: int, max_y: int) -> 'Block':
         """Returns a random BodyBlock within the given range.
         ----------
         Parameters

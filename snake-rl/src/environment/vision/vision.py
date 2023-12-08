@@ -19,17 +19,17 @@ class Vision:
         self._y_max_distance = self.snake.size_y
         self._diag_max_distance = min(self._x_max_distance, self._y_max_distance)
         self.__raycasting_directions = deque([RaycastingDirection.NORTH, RaycastingDirection.NORTH_EAST,
-                                       RaycastingDirection.EAST, RaycastingDirection.SOUTH_EAST,
-                                       RaycastingDirection.SOUTH, RaycastingDirection.SOUTH_WEST,
-                                       RaycastingDirection.WEST, RaycastingDirection.NORTH_WEST])
+                                              RaycastingDirection.EAST, RaycastingDirection.SOUTH_EAST,
+                                              RaycastingDirection.SOUTH, RaycastingDirection.SOUTH_WEST,
+                                              RaycastingDirection.WEST, RaycastingDirection.NORTH_WEST])
 
-    def _rotate_from_direction(self):
+    def _rotate_from_direction(self) -> deque:
         direction_value = self.snake.direction.value
         raycasting_directions = self.__raycasting_directions.copy()
         raycasting_directions.rotate(-direction_value * 2)
         return raycasting_directions
 
-    def _get_direction_normalization_factor(self, direction:RaycastingDirection):
+    def _get_direction_normalization_factor(self, direction: RaycastingDirection) -> int:
         x, y = direction.value
         if x != 0 and y != 0:
             return self._diag_max_distance
@@ -38,7 +38,7 @@ class Vision:
         else:
             return self._y_max_distance
 
-    def _detect_obstacle_in_direction(self, direction:RaycastingDirection):
+    def _detect_obstacle_in_direction(self, direction: RaycastingDirection) -> tuple[float, int]:
         x, y = self.snake.head.position
         x_step, y_step = direction.value
         normalization_factor = self._get_direction_normalization_factor(direction)
@@ -57,7 +57,7 @@ class Vision:
                 break
         return number_of_steps_in_direction / normalization_factor, Field.WALL.value
 
-    def _detect_obstacle_in_direction_with_wall_transparency(self, direction:RaycastingDirection):
+    def _detect_obstacle_in_direction_with_wall_transparency(self, direction: RaycastingDirection) -> tuple[float, int]:
         x, y = self.snake.head.position
         x_step, y_step = direction.value
         normalization_factor = self._get_direction_normalization_factor(direction)
@@ -73,7 +73,7 @@ class Vision:
                 number_of_steps_in_direction += 1
         return 1., Field.WALL.value
 
-    def get_food_direction_vector(self, food:Block):
+    def get_food_direction_vector(self, food: Block) -> np.array:
         x, y = self._get_food_distance(food)
         indicators = np.zeros(10)
         # binary indicators
@@ -90,14 +90,14 @@ class Vision:
             indicators = self._get_food_direction_without_transparency(indicators, x, y)
         return indicators
 
-    def _get_food_direction_without_transparency(self, indicators:np.array, x:float, y:float):
+    def _get_food_direction_without_transparency(self, indicators: np.array, x: float, y: float) -> np.array:
         indicators[6] = x * indicators[0]
         indicators[7] = np.abs(x) * indicators[2]
         indicators[8] = y * indicators[3]
         indicators[9] = np.abs(y) * indicators[5]
         return indicators
 
-    def get_food_direction_with_transparency(self, indicators:np.array, x:float, y:float):
+    def get_food_direction_with_transparency(self, indicators: np.array, x: float, y: float) -> np.array:
         if x != 0:
             indicators[6] = x if indicators[0] else 1 - np.abs(x)
             indicators[7] = np.abs(x) if indicators[2] else 1 - np.abs(x)
@@ -106,9 +106,7 @@ class Vision:
             indicators[9] = np.abs(y) if indicators[5] else 1 - np.abs(y)
         return indicators
 
-
-
-    def _get_food_distance(self, food: Block):
+    def _get_food_distance(self, food: Block) -> np.array:
         x, y = self.snake.head - food
         direction = self.snake.direction
         match direction:
@@ -121,13 +119,12 @@ class Vision:
             case Direction.LEFT:
                 return np.array([y / self._y_max_distance, -x / self._x_max_distance])
 
-    def look(self):
+    def look(self) -> tuple[list[float], list[int]]:
         raycasting_directions = self._rotate_from_direction()
         distances, targets = [], []
-        detection_function = self._detect_obstacle_in_direction_with_wall_transparency if self.is_penetration_active else self._detect_obstacle_in_direction
+        detection_function = self._detect_obstacle_in_direction_with_wall_transparency \
+            if self.is_penetration_active else self._detect_obstacle_in_direction
         for direction in raycasting_directions:
             distance, target = detection_function(direction)
             distances.append(distance), targets.append(target)
         return distances, targets
-
-

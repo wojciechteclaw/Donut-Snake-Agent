@@ -10,16 +10,15 @@ from src.environment.vision.vision import Vision
 
 class Environment:
 
-    #
     CLASH_REWARD = -2.5
     FOOD_REWARD = 1
 
-    def __init__(self, size_x:int=10,
-                 size_y:int=10,
-                 device:torch.device = 'cpu',
-                 is_penetration_active:bool=False,
-                 publish_environment:bool=False,
-                 publish_address='http://127.0.0.1:5001'):
+    def __init__(self, size_x: int = 10,
+                 size_y: int = 10,
+                 device: torch.device = 'cpu',
+                 is_penetration_active: bool = False,
+                 publish_environment: bool = False,
+                 publish_address: str = 'http://127.0.0.1:5001'):
         self.number_of_steps_without_food = 0
         self.number_of_turns_without_food = 0
         self.number_of_steps = 0
@@ -37,42 +36,42 @@ class Environment:
                            is_penetration_active=is_penetration_active)
         self.reward = 0
         self.PUBLISHER_ADDRESS = publish_address
-        self.update_environment = publish_environment
+        self.is_publish_enabled = publish_environment
 
-    def reset(self):
+    def reset(self) -> None:
         self.snake.reset()
         self.food = self.generate_food()
         self.score = 0
         self.reward = 0
         self.number_of_steps_without_food = 0
         self.number_of_steps = 0
-        if self.update_environment:
+        if self.is_publish_enabled:
             self.publish_environment()
 
-    def generate_food(self):
+    def generate_food(self) -> Block:
         board = self.__get_board_with_snake_items_only()
         empty_cells = np.argwhere(board == Field.EMPTY.value)
         np.random.shuffle(empty_cells)
-        random_item =empty_cells[0]
+        random_item = empty_cells[0]
         return Block(random_item[1], random_item[0])
 
-    def __get_board_with_snake_items_only(self):
+    def __get_board_with_snake_items_only(self) -> np.ndarray:
         board = np.ones((self.size_y, self.size_x)) * Field.EMPTY.value
         board = self.snake.project_snake_on_board(board)
         return board
 
-    def get_board(self):
+    def get_board(self) -> np.ndarray:
         board = self.__get_board_with_snake_items_only()
         board[self.food.y][self.food.x] = Field.APPLE.value
         return np.array(board)
 
-    def check_food(self):
+    def check_food(self) -> bool:
         if self.snake.head == self.food:
             self.snake.append_food()
             return True
         return False
 
-    def observe(self):
+    def observe(self) -> tuple[np.array, np.array, np.array, np.array]:
         board = self.get_board()
         vision = Vision(self.snake, board)
         distance, target_type = vision.look()
@@ -83,7 +82,7 @@ class Environment:
                 food,
                 snake_direction_vector)
 
-    def move_snake(self, action:int):
+    def move_snake(self, action: int) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
         self.snake.move(action)
         found_food = self.check_food()
         self.number_of_steps += 1
@@ -104,7 +103,7 @@ class Environment:
                 torch.tensor(self.snake.alive, dtype=torch.int).to(self.device),
                 torch.tensor(self.score, dtype=torch.float).to(self.device))
 
-    def publish_environment(self, extra:dict = {}):
+    def publish_environment(self, extra: dict = {}) -> None:
         try:
             data = {
                 'x_rows': self.size_x,
@@ -122,8 +121,3 @@ class Environment:
             requests.post(self.PUBLISHER_ADDRESS + '/publish-environment', data=dumped)
         except Exception as e:
             print(e)
-
-
-
-
-

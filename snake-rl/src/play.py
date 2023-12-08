@@ -1,7 +1,8 @@
 import torch
-import time
+from time import sleep
 from src.agent.agent import Agent
 from src.environment.environment import Environment
+
 
 def play(**kwargs):
     best_score = 0
@@ -26,9 +27,9 @@ def play(**kwargs):
         state_0 = agent.get_state(environment)
         move = agent.get_action(state_0)
         _, is_alive, _ = environment.move_snake(move)
-        time.sleep(time_delay)
+        sleep(time_delay)
         if not is_alive:
-            time.sleep(2.5)
+            sleep(2.5)
             score = environment.score
             environment.reset()
             agent.increase_number_of_games()
@@ -38,18 +39,14 @@ def play(**kwargs):
 
 
 settings = {
-    'batch_size': 2**10,
-    'max_memory': 2**12,
-    'gamma': 0.85,
-    'epsilon': 0.00,
     'publish_environment': True,
     # environment
-    'board_x_size': 16,
-    'board_y_size': 10,
-    'is_penetration_active': True,
+    'board_x_size': 6,
+    'board_y_size': 8,
+    'is_penetration_active': False,
     # model
     'hidden_layer_size': 512,
-    'model_name': 'q_learning_net_with_wall_transparency',
+    'model_name': 'q_learning_net_without_wall_transparency',
     'load_model': True,
     'device': 'cpu',
     'step_delay': 0.10,
