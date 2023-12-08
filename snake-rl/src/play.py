@@ -41,8 +41,8 @@ def play(**kwargs):
 settings = {
     'publish_environment': True,
     # environment
-    'board_x_size': 6,
-    'board_y_size': 8,
+    'board_x_size': 10,
+    'board_y_size': 14,
     'is_penetration_active': False,
     # model
     'hidden_layer_size': 512,
@@ -51,7 +51,7 @@ settings = {
     'device': 'cpu',
     'step_delay': 0.10,
     'mode': 'play',
-    # 'publish_address': 'http://snake-transmiter:5001'
+    'publish_address': 'http://snake-transmiter:5001'
 }
 
 if __name__ == '__main__':
